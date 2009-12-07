@@ -17,6 +17,8 @@ $.hitch = function(scope, method){
 	return !scope ? method : function(){ return method.apply(scope, arguments || []); };
 };	
 
+
+
 $.modules = {};
 
 var n = $.extend({
@@ -28,7 +30,6 @@ var Module = function(p) {
 		this.init();
 		return this;
 	};
-	
 	F.prototype = p;
 	return F;
 };
@@ -51,11 +52,11 @@ var Loader = function(m) {
 			return;
 		}
 		
-		var head = document.getElementsByTagName("head")[0];
-		var script = document.createElement("script");
+		var head    = document.getElementsByTagName("head")[0],
+		    script  = document.createElement("script"),
+		    that    = this;
+		    
 		script.src = this.getPath(m);
-		
-		var that = this;
 
 		script.onload = script.onreadystatechange = function() {
 			if (!that.loaded && (!this.readyState || this.readyState == "loaded" || this.readyState == "complete") ) {
@@ -90,14 +91,11 @@ var Loader = function(m) {
 };
 
 $.module = function(moduleName, tmp, p) {
-	// TODO: handle deeper namespaces
-	var m = moduleName.split('.');
-	window[m[0]] = { };
-	window[m[0]][m[1]] = new Module(p);
+	var m = moduleName.split('.'),
+	    o = window[m[0]] = {};       // maybe check to see if it exists already? 
+	o[m[1]] = new Module(p);
 };
 
 $.loadModule = function(m) {
-	var loader = new Loader(m);
-	loader.load();
-	return loader;
+	return (new Loader(m)).load();
 };
