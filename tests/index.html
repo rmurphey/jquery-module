@@ -23,47 +23,24 @@
 	
 	<script>
 	
-	test("path creation", function() {
-		expect(2);
-		var fooLoader = new $._Loader('foo.MyModule');
-		var barLoader = new $._Loader('bar.MyModule');
-
-		equals(fooLoader.getPath(), './foo/MyModule.js', "got correct path using namespace config");
-		equals(barLoader.getPath(), './bar/MyModule.js', "intuited right path from module name");
-	});
-	
 	asyncTest("loading", function() {
-		expect(6);
-		var bar = false, baz = false, bim = false;
+		$.modules = {};
+		var bar = false, 
+			baz = false;
 
-		var fooLoader = new $._Loader('foo.MyModule');
-		var barLoader = new $._Loader('bar.MyModule');
-		var otherLoader = new $._Loader('foo.MyOtherModule');
+		var goodLoader = new $._Loader('foo.MyModule', function() { bar = true; }),
+			badLoader = new $._Loader('bar.MyModule', function() { baz = true; });
 
-		fooLoader.load();
-		fooLoader.done(function() {
-			bar = true;
-		});
-		
-		barLoader.load();
-		barLoader.done(function() {
-			baz = true;
-		});
-		
-		otherLoader.load();
-		otherLoader.done(function() {
-			bim = true;
-		});
-		
+		equals(goodLoader._getPath(), './foo/MyModule.js', "got correct path using namespace config");
+		equals(badLoader._getPath(), './bar/MyModule.js', "intuited right path from module name");
+
 		setTimeout(function() {
 			ok(bar, "script loaded");
-			ok(jQuery.provided['foo.MyModule'], "module provided");
-			ok(jQuery.modules['foo.MyModule'], "module registered");
+			ok(!!jQuery.provided['foo.MyModule'] === true, 	"module provided");
+			ok(!!jQuery.modules['foo.MyModule'] === true, 	"module registered");
 
-			ok(!baz, "missing script did not load so callback didn't run");
-			ok(!jQuery.modules['bar.MyModule'], "missing module not registered");
-			
-			ok(!bim, "script didn't provide itself");
+			ok(!!baz === false, "callback shouldn't run if script isn't found");
+			ok(!!jQuery.modules['bar.MyModule'] === false, "nonexistent module shouldn't be found");
 			
 			start();
 		}, 500);

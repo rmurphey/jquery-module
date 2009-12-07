@@ -13,70 +13,61 @@
 	}, $.namespaces);
 	
 	/* this loader needs to be adapted to use labjs */
-	$._Loader = function(m) {
+	$._Loader = function(m, cb) {
+		this.callbacks = [];
 		this.module = m;
-
-		this.getPath = function() {
+		
+		if (m in jQuery.modules) {
+			cb && cb();
+			return $.modules[m];
+		}
+		
+		cb && jQuery.isFunction(cb) && this.callbacks.push(cb);
+		
+		var self = this;
+		
+		$.getScript(this._getPath(), function() {
+			self._onLoad();
+		});
+		
+		return this;
+	};
+	
+	$._Loader.prototype = {
+		loaded : false,
+		
+		_getPath : function() {
 			/* TODO: deal with deeper namepsacing */
 			var m = this.module.split('.');
 			var namespace = m[0];
 			var file = m[1] + '.js';
 			return n._root + ( n[namespace] || (namespace + '/') ) + file;
-		};
+		},
+		
+		_onLoad : function() {
+			$.modules[this.module] = this;
 
-		this.load = function() {
-			if (jQuery.modules[this.module]) {
+			if (jQuery.provided[this.module]) {
 				this.loaded = true;
-				return;
+				$.each(this.callbacks, function(i, fn) {
+					fn();
+				});
+			} 
+		},
+		
+		done : function(cb) {
+			if (this.loaded && jQuery.provided[this.module]) {
+				cb();
+			} else {
+				this.callbacks.push(cb);
 			}
-
-			var head    = document.getElementsByTagName("head")[0],
-			    script  = document.createElement("script"),
-			    that    = this;
-
-			script.src = this.getPath(m);
-
-			script.onload = script.onreadystatechange = function() {
-				if (!that.loaded && (!this.readyState || this.readyState == "loaded" || this.readyState == "complete") ) {
-					if (!jQuery.provided[that.module]) { return; }
-					jQuery.modules[that.module] = true;
-					that.loaded = true;
-					script.onload = script.onreadystatechange = null;
-				}
-			};
-
-			head.appendChild(script);
-
+			
 			return this;
-		};
-
-		this.done = function(cb, err) {
-			var count = 0;
-
-			var timeout = setTimeout((function(that) { 
-				var f = function() {
-					if (this.loaded) { 
-						cb && cb(); 
-						clearTimeout(timeout); 
-						return;
-					} 
-
-					if (++count > 50) {
-						clearTimeout(timeout);
-						err && err();
-					}
-				};
-
-				return function() { f.apply(that, []); };
-			})(this), 100);
-		};
-
-		return this;
+		}
 	};
 
-	// $.require('foo.Bar').done(function() { ... });
-	$.require = function(m) {
-		return (new $._Loader(m)).load();
+	$.require = function(m, cb) {
+		return new $._Loader(m, cb);
 	};
 
 	$.provide = function(m) {
