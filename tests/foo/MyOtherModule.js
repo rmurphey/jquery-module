@@ -1,1 +1,1 @@
-console.log('unprovided script');
+// this file is intentionally blank

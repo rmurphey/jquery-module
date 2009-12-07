@@ -52,7 +52,9 @@
 				$.each(this.callbacks, function(i, fn) {
 					fn();
 				});
-			} 
+			} else {
+				throw("module " + this.module + " was required but not provided");
+			}
 		},
 		
 		done : function(cb) {
