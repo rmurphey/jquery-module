@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Module and Loader example</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Rebecca Murphey">
+	<!-- Date: 2009-12-07 -->
+	
+</head>
+<body>
+	<script src="../jquery/jquery-1.4a1.js"></script>
+	<script>
+	jQuery.namespaces = {
+		"_root" : './js/'
+	};
+	</script>
+	
+	<script src="../jquery.loader.js"></script>
+	<script src="../jquery.module.js"></script>
+	<script>
+	$.require('myNamespace.Thinger').done(function() {
+		var b = new myNamespace.Bar();
+	});
+	</script>
+</body>
+</html>

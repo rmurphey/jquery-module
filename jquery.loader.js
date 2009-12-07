@@ -22,7 +22,7 @@
 		}
 		
 		this.callbacks = [];
-		cb && jQuery.isFunction(cb) && this.callbacks.push(cb);
+		cb && this.done(cb);
 		
 		var self = this;
 		
@@ -51,11 +51,12 @@
 		
 		_onLoad : function() {
 			$.modules[this.module] = this;
+			var self = this;
 
 			if (jQuery.provided[this.module]) {
 				this.loaded = true;
 				$.each(this.callbacks, function(i, fn) {
-					fn();
+					fn.apply(self);
 				});
 			} else {
 				throw("module " + this.module + " was required but not provided");

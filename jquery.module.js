@@ -25,9 +25,8 @@
 			args.push(obj.prototype);
 		});
 		
-		var F = function(args) {
-			var args = args;
-			this.init && this.init(args);
+		var F = function(c) {
+			this.init && this.init(c);
 			return this;
 		};
 		
