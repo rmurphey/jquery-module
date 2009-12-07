@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>index</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Rebecca Murphey">
+	<link rel="stylesheet" href="qunit/qunit.css" type="text/css" />
+	
+	<script src="../jquery/jquery-1.3.2.js"></script>
+	<script src="qunit/qunit.js"></script>
+	
+	<script src="../jquery.module.js"></script>
+	<script>
+	jQuery.namespaces = {
+		"foo" : "/"
+	};
+	
+	test("create module", function() {
+		expect(1);
+		ok(!!jQuery.module, "jQuery.module exists");
+	});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">jquery.module.js</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>
