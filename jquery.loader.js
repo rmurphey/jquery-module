@@ -14,7 +14,6 @@
 	
 	/* this loader needs to be adapted to use labjs */
 	$._Loader = function(m, cb) {
-		this.callbacks = [];
 		this.module = m;
 		
 		if (m in jQuery.modules) {
@@ -22,6 +21,7 @@
 			return $.modules[m];
 		}
 		
+		this.callbacks = [];
 		cb && jQuery.isFunction(cb) && this.callbacks.push(cb);
 		
 		var self = this;
