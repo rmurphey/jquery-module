@@ -62,8 +62,8 @@ test("inheritance", function() {
 	});
 	
 	var myFooInstance = new foo.MyModule();
-	var myBarInstance = new bar.MyModule();
-	
 	ok(myFooInstance.barProperty === true && myFooInstance.fooProperty === true, "properties are inherited as specified");
+
+	var myBarInstance = new bar.MyModule();
 	ok(!!myBarInstance.fooProperty === false, "no cross-pollination of properties");
 });
