@@ -7,11 +7,11 @@ asyncTest("loading", function() {
 		bim = false;
 
 	var goodLoader = new $._Loader('foo.MyModule', function() { bar = true; }),
-		badLoader = new $._Loader('bar.MyModule', function() { baz = true; }),
+		badLoader = new $._Loader('bar.bim.MyModule', function() { baz = true; }),
 		unprovidedLoader = new $._Loader('foo.MyOtherModule', function() { bim = true; });
 
 	equals(goodLoader._getPath(), './foo/MyModule.js', "got correct path using namespace config");
-	equals(badLoader._getPath(), './bar/MyModule.js', "intuited right path from module name");
+	equals(badLoader._getPath(), './bar/bim/MyModule.js', "intuited right path from module name");
 
 	setTimeout(function() {
 		ok(bar, "script loaded");

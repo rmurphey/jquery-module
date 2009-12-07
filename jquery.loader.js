@@ -37,11 +37,16 @@
 		loaded : false,
 		
 		_getPath : function() {
-			/* TODO: deal with deeper namepsacing */
 			var m = this.module.split('.');
-			var namespace = m[0];
-			var file = m[1] + '.js';
-			return n._root + ( n[namespace] || (namespace + '/') ) + file;
+			var filename = m.pop() + '.js';
+			var ns = m.shift();
+			var prefix = n._root + (n[ns] || (ns + '/'));
+			
+			$.each(m, function(i, v) {
+				prefix += v + '/'
+			});
+			
+			return prefix + filename;
 		},
 		
 		_onLoad : function() {
