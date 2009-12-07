@@ -20,77 +20,13 @@
 	
 	<script src="../jquery.loader.js"></script>
 	<script src="../jquery.module.js"></script>
-	
-	<script>
-	
-	asyncTest("loading", function() {
-		$.modules = {};
-		var bar = false, 
-			baz = false,
-			bim = false;
 
-		var goodLoader = new $._Loader('foo.MyModule', function() { bar = true; }),
-			badLoader = new $._Loader('bar.MyModule', function() { baz = true; }),
-			unprovidedLoader = new $._Loader('foo.MyOtherModule', function() { bim = true; });
-
-		equals(goodLoader._getPath(), './foo/MyModule.js', "got correct path using namespace config");
-		equals(badLoader._getPath(), './bar/MyModule.js', "intuited right path from module name");
-
-		setTimeout(function() {
-			ok(bar, "script loaded");
-			ok(!!jQuery.provided['foo.MyModule'] === true, 	"module provided");
-			ok(!!jQuery.modules['foo.MyModule'] === true, 	"module registered");
-
-			ok(!!baz === false, "callback shouldn't run if script isn't found");
-			ok(!!jQuery.modules['bar.MyModule'] === false, "nonexistent module shouldn't be found");
-			
-			ok(!!bim === false, "callback shouldn't run if module isn't provided");
-			
-			start();
-		}, 500);
-	});
-	
-	test("basic module creation", function() {
-		var initialized = false; 
-		
-		$.module('foo.MyModule', null, {
-			init : function() {
-				initialized = true;
-			}
-		});
-		
-		new foo.MyModule();
-		ok(initialized, "init method runs on module creation");
-	});
-	
-	test("passing arguments to new module constructors", function() {
-		$.module('foo.MyModule', null, {
-			config : {
-				a : 'c'
-			},
-			
-			init : function(args) {
-				this.args = $.extend({}, this.config, args);
-				this.foo();
-			},
-			
-			foo : function() {
-				this.thing = this.args.a;
-			}
-		});
-		
-		var myInstance = new foo.MyModule({ a : 'b' });
-		equals(myInstance.thing, 'b');
-		
-		var myOtherInstance = new foo.MyModule();
-		equals(myOtherInstance.thing, 'c');
-	});
-	
-	</script>
+	<script src="module.js"></script>
+	<script src="loader.js"></script>
 </head>
 
 <body>
-	<h1 id="qunit-header">jquery.module.js</h1>
+	<h1 id="qunit-header">jquery.module.js and jquery.loader.js</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
