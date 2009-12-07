@@ -11,15 +11,65 @@
 	<script src="../jquery/jquery-1.3.2.js"></script>
 	<script src="qunit/qunit.js"></script>
 	
-	<script src="../jquery.module.js"></script>
 	<script>
 	jQuery.namespaces = {
-		"foo" : "/"
+		"_root" : 	"./",
+		"foo" : 	"foo/"
 	};
+	</script>
 	
-	test("create module", function() {
-		expect(1);
-		ok(!!jQuery.module, "jQuery.module exists");
+	<script src="../jquery.module.js"></script>
+	
+	<script>
+	
+	test("Loader Path Creation", function() {
+		expect(2);
+		var fooLoader = new Loader('foo.MyModule');
+		var barLoader = new Loader('bar.MyModule');
+
+		equals(fooLoader.getPath(), './foo/MyModule.js', "got correct path using namespace config");
+		equals(barLoader.getPath(), './bar/MyModule.js', "intuited right path from module name");
+	});
+	
+	asyncTest("Loader Loading", function() {
+		expect(4);
+		var bar = false, baz = false;
+
+		var fooLoader = new Loader('foo.MyModule');
+		var barLoader = new Loader('bar.MyModule');
+
+		fooLoader.load();
+		fooLoader.done(function() {
+			bar = true;
+		});
+		
+		barLoader.load();
+		barLoader.done(function() {
+			baz = true;
+		});
+		
+		setTimeout(function() {
+			ok(bar, "script loaded");
+			ok(jQuery.modules['foo.MyModule'], "module registered");
+
+			ok(!baz, "missing script did not load so callback didn't run");
+			ok(!jQuery.modules['bar.MyModule'], "missing module not registered");
+			
+			start();
+		}, 500);
+	});
+	
+	test("basic module creation", function() {
+		var initialized = false; 
+		
+		$.module('foo.MyModule', null, {
+			init : function() {
+				initialized = true;
+			}
+		});
+		
+		new foo.MyModule();
+		ok(initialized, "init method runs on module creation");
 	});
 	</script>
 </head>
