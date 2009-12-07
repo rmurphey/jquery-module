@@ -70,7 +70,7 @@ var Loader = function(m) {
 		return this;
 	};
 	
-	this.done = function(cb) {
+	this.done = function(cb, err) {
 		var count = 0
 		var timeout = setTimeout($.hitch(this, function() {
 			if (this.loaded) { 
@@ -81,6 +81,7 @@ var Loader = function(m) {
 			
 			if (++count > 50) {
 				clearTimeout(timeout);
+				err();
 			}
 		}), 100)
 	};
@@ -89,8 +90,9 @@ var Loader = function(m) {
 };
 
 $.module = function(moduleName, tmp, p) {
+	// TODO: handle deeper namespaces
 	var m = moduleName.split('.');
-	window[m[0]] = {};
+	window[m[0]] = { };
 	window[m[0]][m[1]] = new Module(p);
 };
 
