@@ -1,24 +1,3 @@
-/*
-	jQuery.hitch() -  Advanced scope manipulation for jQuery 
-	version: 0.1, Peter Higgins (dante at dojotoolkit.org)
-
-	(c) 2004-2009 The Dojo Foundation - adapted from `dojo.hitch`
-	Either AFL/New BSD license, see: http://dojotoolkit.org/license 
-*/
-
-$.hitch = function(scope, method){
-	// summary: Create a function that will only ever execute in a given scope
-	if(!method){ method = scope; scope = null; }
-	if(typeof method == "string"){
-		scope = scope || window;
-		if(!scope[method]){ throw(['method not found']); }
-		return function(){ return scope[method].apply(scope, arguments || []); };
-	}
-	return !scope ? method : function(){ return method.apply(scope, arguments || []); };
-};	
-
-
-
 $.modules = {};
 
 var n = $.extend({
@@ -26,8 +5,8 @@ var n = $.extend({
 }, $.namespaces);
 
 var Module = function(p) {
-	var F = function() {
-		this.init();
+	var F = function(args) {
+		this.init && this.init(args);
 		return this;
 	};
 	F.prototype = p;
@@ -73,18 +52,23 @@ var Loader = function(m) {
 	
 	this.done = function(cb, err) {
 		var count = 0
-		var timeout = setTimeout($.hitch(this, function() {
-			if (this.loaded) { 
-				cb(); 
-				clearTimeout(timeout); 
-				return;
-			} 
+		var timeout = setTimeout((function(that) { 
+			var f = function() {
+				if (this.loaded) { 
+					cb && cb(); 
+					clearTimeout(timeout); 
+					return;
+				} 
 			
-			if (++count > 50) {
-				clearTimeout(timeout);
-				err();
-			}
-		}), 100)
+				if (++count > 50) {
+					clearTimeout(timeout);
+					err && err();
+				}
+			};
+			
+			return function() { f.apply(that, []); }
+			
+		})(this), 100)
 	};
 	
 	return this;
@@ -98,4 +82,8 @@ $.module = function(moduleName, tmp, p) {
 
 $.loadModule = function(m) {
 	return (new Loader(m)).load();
+};
+
+$.bind = function(sourceModule, sourceMethod, targetModule, targetMethod) {
+
 };

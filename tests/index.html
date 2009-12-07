@@ -71,6 +71,19 @@
 		new foo.MyModule();
 		ok(initialized, "init method runs on module creation");
 	});
+	
+	test("passing arguments to new module constructors", function() {
+		$.module('foo.MyModule', null, {
+			init : function(args) {
+				this.args = args;
+			}
+		});
+		
+		var myInstance = new foo.MyModule({ a : 'b' });
+		equals(myInstance.args.a, 'b');
+	});
+	
+	test("")
 	</script>
 </head>
 <body>
@@ -78,5 +91,7 @@
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
+	
+	<div id="foo"></div>
 </body>
 </html>
