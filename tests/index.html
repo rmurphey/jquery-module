@@ -8,7 +8,7 @@
 	<meta name="author" content="Rebecca Murphey">
 	<link rel="stylesheet" href="qunit/qunit.css" type="text/css" />
 	
-	<script src="../jquery/jquery-1.3.2.js"></script>
+	<script src="../jquery/jquery-1.4a1.js"></script>
 	<script src="qunit/qunit.js"></script>
 	
 	<script>
@@ -22,7 +22,7 @@
 	
 	<script>
 	
-	test("Loader Path Creation", function() {
+	test("path creation", function() {
 		expect(2);
 		var fooLoader = new Loader('foo.MyModule');
 		var barLoader = new Loader('bar.MyModule');
@@ -31,12 +31,13 @@
 		equals(barLoader.getPath(), './bar/MyModule.js', "intuited right path from module name");
 	});
 	
-	asyncTest("Loader Loading", function() {
-		expect(4);
-		var bar = false, baz = false;
+	asyncTest("loading", function() {
+		expect(6);
+		var bar = false, baz = false, bim = false;
 
 		var fooLoader = new Loader('foo.MyModule');
 		var barLoader = new Loader('bar.MyModule');
+		var otherLoader = new Loader('foo.MyOtherModule');
 
 		fooLoader.load();
 		fooLoader.done(function() {
@@ -48,12 +49,20 @@
 			baz = true;
 		});
 		
+		otherLoader.load();
+		otherLoader.done(function() {
+			bim = true;
+		});
+		
 		setTimeout(function() {
 			ok(bar, "script loaded");
+			ok(jQuery.provided['foo.MyModule'], "module provided");
 			ok(jQuery.modules['foo.MyModule'], "module registered");
 
 			ok(!baz, "missing script did not load so callback didn't run");
 			ok(!jQuery.modules['bar.MyModule'], "missing module not registered");
+			
+			ok(!bim, "script didn't provide itself");
 			
 			start();
 		}, 500);
@@ -74,16 +83,30 @@
 	
 	test("passing arguments to new module constructors", function() {
 		$.module('foo.MyModule', null, {
+			config : {
+				a : 'c'
+			},
+			
 			init : function(args) {
-				this.args = args;
+				this.args = $.extend({}, this.config, args);
+				this.foo();
+			},
+			
+			foo : function() {
+				this.thing = this.args.a;
 			}
 		});
 		
 		var myInstance = new foo.MyModule({ a : 'b' });
-		equals(myInstance.args.a, 'b');
+		equals(myInstance.thing, 'b');
+		
+		var myOtherInstance = new foo.MyModule();
+		equals(myOtherInstance.thing, 'c');
 	});
+	
 	</script>
 </head>
+
 <body>
 	<h1 id="qunit-header">jquery.module.js</h1>
 	<h2 id="qunit-banner"></h2>

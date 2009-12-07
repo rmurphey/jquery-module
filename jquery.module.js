@@ -1,4 +1,5 @@
 $.modules = {};
+$.provided = {};
 
 var n = $.extend({
 	"_root" : "./"
@@ -6,9 +7,12 @@ var n = $.extend({
 
 var Module = function(p) {
 	var F = function(args) {
+		var args = args;
 		this.init && this.init(args);
+		
 		return this;
 	};
+	
 	F.prototype = p;
 	return F;
 };
@@ -39,6 +43,7 @@ var Loader = function(m) {
 
 		script.onload = script.onreadystatechange = function() {
 			if (!that.loaded && (!this.readyState || this.readyState == "loaded" || this.readyState == "complete") ) {
+				if (!jQuery.provided[that.module]) { return; }
 				that.loaded = true;
 				jQuery.modules[that.module] = true;
 				script.onload = script.onreadystatechange = null;
@@ -74,16 +79,21 @@ var Loader = function(m) {
 	return this;
 };
 
+// usage:
+// $.module('foo.Bar', null, prototype);
 $.module = function(moduleName, tmp, p) {
 	var m = moduleName.split('.'),
-	    o = window[m[0]] = {};       // maybe check to see if it exists already? 
+	    o = window[m[0]] = window[m[0]] || {};
 	o[m[1]] = new Module(p);
 };
 
+// usage:
+// $.loadModule('foo.Bar').done(function() { ... });
 $.loadModule = function(m) {
 	return (new Loader(m)).load();
 };
 
-$.bind = function(sourceModule, sourceMethod, targetModule, targetMethod) {
 
+$.provide = function(m) {
+	$.provided[m] = true;
 };
