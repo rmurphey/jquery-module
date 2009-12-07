@@ -2,15 +2,24 @@
 	$.modules = {};
 	$.provided = {};
 
+	/*
+	 * $.namespaces would be provided by the user, 
+	 * but if it wasn't provided we'd use semi-sensible defaults.
+	 * it would need to be provided before this file was included
+	 */
 	var n = $.extend({
 		"_root" : "./"
 	}, $.namespaces);
 
+	/* 
+	 * the idea of this is to be a super-lightweight module factory;
+	 * it could optionally be replaced by jQuery.widget, but currently
+	 * that is only available in jQuery UI
+	 */
 	$._Module = function(p) {
 		var F = function(args) {
 			var args = args;
 			this.init && this.init(args);
-
 			return this;
 		};
 
@@ -18,13 +27,22 @@
 		return F;
 	};
 
+	// usage:
+	// $.module('foo.Bar', null, prototype);
+	$.module = function(moduleName, tmp, p) {
+		/* TODO: deal with deeper namespacing */
+		var m = moduleName.split('.'),
+		    o = window[m[0]] = window[m[0]] || {};
+		o[m[1]] = new $._Module(p);
+	};
+	
+	
+	/* this loader needs to be adapted to use labjs */
 	$._Loader = function(m) {
-		// obviously this whole Loader could and should be better;
-		// want to explore using labjs for this functionality
 		this.module = m;
 
 		this.getPath = function() {
-			// TODO: get paths more than one level deep
+			/* TODO: deal with deeper namepsacing */
 			var m = this.module.split('.');
 			var namespace = m[0];
 			var file = m[1] + '.js';
@@ -79,14 +97,6 @@
 		};
 
 		return this;
-	};
-
-	// usage:
-	// $.module('foo.Bar', null, prototype);
-	$.module = function(moduleName, tmp, p) {
-		var m = moduleName.split('.'),
-		    o = window[m[0]] = window[m[0]] || {};
-		o[m[1]] = new $._Module(p);
 	};
 
 	// usage:
