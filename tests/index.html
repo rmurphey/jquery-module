@@ -24,8 +24,8 @@
 	
 	test("path creation", function() {
 		expect(2);
-		var fooLoader = new Loader('foo.MyModule');
-		var barLoader = new Loader('bar.MyModule');
+		var fooLoader = new $._Loader('foo.MyModule');
+		var barLoader = new $._Loader('bar.MyModule');
 
 		equals(fooLoader.getPath(), './foo/MyModule.js', "got correct path using namespace config");
 		equals(barLoader.getPath(), './bar/MyModule.js', "intuited right path from module name");
@@ -35,9 +35,9 @@
 		expect(6);
 		var bar = false, baz = false, bim = false;
 
-		var fooLoader = new Loader('foo.MyModule');
-		var barLoader = new Loader('bar.MyModule');
-		var otherLoader = new Loader('foo.MyOtherModule');
+		var fooLoader = new $._Loader('foo.MyModule');
+		var barLoader = new $._Loader('bar.MyModule');
+		var otherLoader = new $._Loader('foo.MyOtherModule');
 
 		fooLoader.load();
 		fooLoader.done(function() {
