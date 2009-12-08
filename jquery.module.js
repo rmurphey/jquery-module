@@ -8,7 +8,7 @@
 		var m = moduleName.split('.'),
 			c = m.pop(),
 			o = window;
-		
+			
 		$.each(m, function(i, v){
 			o[v] = o[v] || {};
 			o = o[v];
@@ -22,7 +22,8 @@
 		var args = [ p ];
 		
 		$.each(inherits, function(i, obj) {
-			args.push(obj.prototype);
+			/* TODO: this should probably be smarter */
+			typeof(obj) == 'object' && args.push(obj.prototype);
 		});
 		
 		var F = function(c) {
