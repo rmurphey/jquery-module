@@ -1,5 +1,10 @@
 module("Loader");
 
+jQuery.namespaces = {
+	"_root" : 	"./",
+	"foo" : 	"foo/"
+};
+
 asyncTest("loading", function() {
 	$.modules = {};
 	var bar = false, 

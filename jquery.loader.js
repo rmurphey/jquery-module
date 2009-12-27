@@ -16,7 +16,7 @@
 	$._Loader = function(m, cb) {
 		this.module = m;
 		
-		if (m in jQuery.modules) {
+		if (m in $.modules) {
 			cb && cb();
 			return $.modules[m];
 		}
@@ -53,7 +53,7 @@
 			$.modules[this.module] = this;
 			var self = this;
 
-			if (jQuery.provided[this.module]) {
+			if ($.provided[this.module]) {
 				this.loaded = true;
 				$.each(this.callbacks, function(i, fn) {
 					fn.apply(self);
@@ -64,7 +64,7 @@
 		},
 		
 		done : function(cb) {
-			if (this.loaded && jQuery.provided[this.module]) {
+			if (this.loaded && $.provided[this.module]) {
 				cb();
 			} else {
 				this.callbacks.push(cb);

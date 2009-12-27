@@ -10,6 +10,8 @@ test("basic module creation", function() {
 	});
 	
 	new foo.MyModule();
+	ok(!!foo === true, "created namespace");
+	ok(!!foo.MyModule === true, "created module at correct location");
 	ok(!!initialized === true, "init method runs on module creation");
 });
 
@@ -57,13 +59,15 @@ test("inheritance", function() {
 		barProperty : true
 	});
 	
-	$.module('foo.MyModule', [ bar.MyModule ], {
+	$.module('foo.MyModule', [ bar.MyModule, { otherProperty : true } ], {
 		fooProperty : true
 	});
 	
 	var myFooInstance = new foo.MyModule();
-	ok(myFooInstance.barProperty === true && myFooInstance.fooProperty === true, "properties are inherited as specified");
+	ok(!!myFooInstance.otherProperty === true, "property inherited from object literal")
+	ok(myFooInstance.barProperty === true && myFooInstance.fooProperty === true, "property inherited from module");
 
 	var myBarInstance = new bar.MyModule();
 	ok(!!myBarInstance.fooProperty === false, "no cross-pollination of properties");
+	
 });

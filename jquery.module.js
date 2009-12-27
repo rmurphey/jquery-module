@@ -4,7 +4,11 @@
 	 * it could optionally be replaced by jQuery.widget, but currently
 	 * that is only available in jQuery UI
 	 */
-	$.module = function(moduleName, inherits, p) {
+	$.module = function(
+		moduleName	/* String */, 
+		inherits 	/* Array of Object Literals or Modules to Mix In */, 
+		p 			/* Module Prototype */
+	) {
 		var m = moduleName.split('.'),
 			c = m.pop(),
 			o = window;
@@ -14,24 +18,32 @@
 			o = o[v];
 		});
 		
-		o[c] = new $._Module(p, inherits);
+		o[c] = new Module(p, inherits);
 	};
 
-	$._Module = function(p, inherits) {
-		var inherits = inherits || [];
-		var args = [ p ];
-		
+	var Module = function(p, inherits) {
+		var args = [ p ],
+			F = function(c) {
+				this.init && typeof(this.init) == 'function' && this.init(c);
+			
+				$.each(args, function(i, arg) {
+					arg.init && arg.init(c);
+				});
+			
+				return this;
+			};
+
+		inherits && $.isArray(inherits) &&
 		$.each(inherits, function(i, obj) {
-			/* TODO: this should probably be smarter */
-			typeof(obj) == 'object' && args.push(obj.prototype);
+			if (typeof(obj) == 'function') {
+				args.push(obj.prototype);
+			} else {
+				args.push(obj);
+			}
 		});
 		
-		var F = function(c) {
-			this.init && this.init(c);
-			return this;
-		};
-		
 		F.prototype = $.extend.apply(F, args);
+
 		return F;
 	};
 })(jQuery);
