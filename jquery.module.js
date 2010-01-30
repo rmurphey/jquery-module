@@ -1,7 +1,7 @@
 (function($){
 	$.module = function(
 		moduleName	/* String */, 
-		base 		/* Module to Inherit */, 
+		base 		/* Module(s) to Inherit (String or Array) */, 
 		p 			/* Module Prototype */
 	) {
 		var m = moduleName.split('.'),
