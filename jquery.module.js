@@ -1,8 +1,4 @@
 (function($){
-	var _e = $.extend, 
-		_p = 'prototype', 
-		_f = $.isFunction; 
-	
 	$.module = function(
 		moduleName	/* String */, 
 		base 		/* Module(s) to Inherit (String or Array) */, 
@@ -18,7 +14,7 @@
 		});
 		
 		o[c] = new Module(p, base, moduleName);
-		o[c][_p]._moduleName = moduleName;
+		o[c].prototype._moduleName = moduleName;
 	};
 
 	var Module = function(p, base, moduleName) {
@@ -27,7 +23,7 @@
 		*/
 		var b = $.isArray(base) ? base : [ base ],
 			F = function() {
-				_f(this.init) && this.init.apply(this, arguments);
+				$.isFunction(this.init) && this.init.apply(this, arguments);
 				return this;
 			};
 			
@@ -36,20 +32,20 @@
 				throw('Missing dependency for ' + moduleName);
 				return null;
 			}
-			var base = _f(base) ? base[_p] : base;
-			F[_p] = _e({}, F[_p], base);
+			var base = $.isFunction(base) ? base.prototype : base;
+			F.prototype = $.extend({}, F.prototype, base);
 			return base;
 		});
 			
-		F[_p] = _e({}, F[_p], p);
+		F.prototype = $.extend({}, F.prototype, p);
 		
-		F[_p].inherited = function(method) {
+		F.prototype.inherited = function(method) {
 			if (!b.length) { return; }
 
 			var fn, s, m = typeof(method) === 'string';
 			
 			fn = b[b.length-1][m ? method : 'init'];
-			_f(fn) && fn.apply(this, Array[_p].slice.call(arguments).slice(m ? 0 : 1));
+			$.isFunction(fn) && fn.apply(this, Array.prototype.slice.call(arguments).slice(m ? 0 : 1));
 		}
 
 		return F;
