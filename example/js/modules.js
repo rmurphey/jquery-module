@@ -14,6 +14,7 @@ $.module('Widget._base', null, {
 	update : false,
 	init : function(node) {
 		this.target = $('<div class="target"/>').appendTo(node);
+		this.fetch();
 	},
 	
 	fetch : function() {
@@ -22,6 +23,10 @@ $.module('Widget._base', null, {
 			url : this.baseUrl + '&' + this.cbParam + '=?',
 			success : $.proxy(this.handleResponse, this)
 		});
+	}, 
+	
+	handleResponse : function(resp) {
+		console.log(resp);
 	}
 });
 
@@ -31,13 +36,12 @@ $.module('Widget.Twitter', [ Widget._base ], {
 	cbParam : "callback",
 	
 	init : function(node) {
-		this.inherited(node);
 		this.baseUrl = this.baseUrl.replace('${username}', node.attr('data-user'));
-		this.fetch();
+		this.inherited(node);
 	},
 	
 	handleResponse : function(resp) {
-		console.log(resp);
+		console.log('twitter: ', resp);
 	}
 });
 
@@ -47,10 +51,6 @@ $.module('Widget.Rss', [ Widget._base ], {
 	
 	init : function(node) {
 		this.baseUrl = this.baseUrl + escape("'" + node.attr('data-url') + "'");
-		this.fetch();
-	},
-	
-	handleResponse : function(resp) {
-		console.log(resp);
+		this.inherited(node);
 	}
 });

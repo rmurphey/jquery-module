@@ -40,8 +40,7 @@
 			var args, fn, s, _aps = Array.prototype.slice;
 			
 			if (!b.length) { return; }
-			
-			if (!typeof(method) == 'string') {
+			if (typeof(method) !== 'string') {
 				method = 'init';
 				s = 0;
 			} else {
