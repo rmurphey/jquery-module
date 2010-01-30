@@ -44,7 +44,7 @@
 
 			var fn, s, m = typeof(method) === 'string';
 			
-			fn = b[0][m ? method : 'init'];
+			fn = b[b.length-1][m ? method : 'init'];
 			_f(fn) && fn.apply(this, Array[_p].slice.call(arguments).slice(m ? 0 : 1));
 		}
 
