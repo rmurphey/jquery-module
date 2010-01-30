@@ -17,21 +17,25 @@
 			o = o[v];
 		});
 		
-		o[c] = new Module(p, base);
+		o[c] = new Module(p, base, moduleName);
 		o[c][_p]._moduleName = moduleName;
 	};
 
-	var Module = function(p, base) {
+	var Module = function(p, base, moduleName) {
 		/* 	
 			Thanks to $.widget from jQuery UI for helping to clarify how to do this
 		*/
 		var b = $.isArray(base) ? base : [ base ],
 			F = function() {
-				this.init.apply(this, arguments);
+				_f(this.init) && this.init.apply(this, arguments);
 				return this;
 			};
 			
 		b = $.map(b.reverse(), function(base, i) {
+			if (base === undefined) {
+				throw('Missing dependency for ' + moduleName);
+				return null;
+			}
 			var base = _f(base) ? base[_p] : base;
 			F[_p] = _e({}, F[_p], base);
 			return base;

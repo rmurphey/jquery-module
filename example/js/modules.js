@@ -1,3 +1,4 @@
+// factory for instantiating a class based on markup
 $.module('Factory', null, {
 	init : function(node) {
 		this.types = {
@@ -10,8 +11,10 @@ $.module('Factory', null, {
 	}
 });
 
+// abstract classes to be inherited
 $.module('Widget._fetcher', null, {
-	update : false,
+	cbParam  : 'callback',
+	
 	init : function(node) {
 		this.target = $('<div class="target"/>').appendTo(node);
 		this.fetch();
@@ -32,10 +35,9 @@ $.module('Widget._defaultHandler', null, {
 	}
 });
 
+// classes to be instantiated based on markup
 $.module('Widget.Twitter', Widget._fetcher, {
-	update : 15000,
 	baseUrl : "http://twitter.com/status/user_timeline/${username}.json?count=10",
-	cbParam : "callback",
 	
 	init : function(node) {
 		this.baseUrl = this.baseUrl.replace('${username}', node.attr('data-user'));
@@ -50,7 +52,6 @@ $.module('Widget.Twitter', Widget._fetcher, {
 
 $.module('Widget.Rss', [ Widget._fetcher, Widget._defaultHandler ], {
 	baseUrl : "http://query.yahooapis.com/v1/public/yql?format=json&q=select%20*%20from%20rss%20where%20url%3D",
-	cbParam : "callback",
 	
 	init : function(node) {
 		this.baseUrl = this.baseUrl + escape("'" + node.attr('data-url') + "'");
