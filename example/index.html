@@ -19,12 +19,12 @@
 			<h2>RSS</h2>
 		</li>
 	</ul>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
 	<script src="../jquery.module.js"></script>
 	<script src="js/modules.js"></script>
 	<script>
 	$(document).ready(function() {
-	//	$('#modules li.module').each(function() { new Widget($(this)); });
+		$('#modules li.module').each(function() { new Factory($(this)); });
 	});
 	</script>
 </body>

@@ -1,7 +1,7 @@
 (function($){
 	$.module = function(
 		moduleName	/* String */, 
-		inherits 	/* Array of Object Literals or Modules to Mix In */, 
+		base 		/* Module to Inherit */, 
 		p 			/* Module Prototype */
 	) {
 		var m = moduleName.split('.'),
@@ -13,30 +13,49 @@
 			o = o[v];
 		});
 		
-		o[c] = new Module(p, inherits);
+		o[c] = new Module(p, base);
+		o[c].prototype._moduleName = moduleName;
 	};
 
-	var Module = function(p, inherits) {
-		var args = [ p ],
-			F = function(c) {
-				$.each(args, function(i, arg) {
-					console.log(arg);
-					arg.init && typeof(arg.init) == 'function' && arg.init(c);
-				});
-			
+	var Module = function(p, base) {
+		/* 	
+			Thanks to $.widget from jQuery UI  
+			for helping to clarify how to do this
+		*/
+		var b = $.isArray(base) ? base : [ base ],
+			F = function() {
+				this.init.apply(this, arguments);
 				return this;
 			};
 			
-		inherits && $.isArray(inherits) &&
-		$.each(inherits, function(i, obj) {
-			if (typeof(obj) == 'function') {
-				args.push(obj.prototype);
-			} else {
-				args.push(obj);
-			}
+		b = $.map(b, function(base, i) {
+			var base = $.isFunction(base) ? base.prototype : base;
+			F.prototype = $.extend({}, F.prototype, base);
+			return base;
 		});
+			
+		F.prototype = $.extend({}, F.prototype, p);
 		
-		F.prototype = $.extend.apply(F, args);
+		F.prototype.inherited = function(method) {
+			var args, fn, s, _aps = Array.prototype.slice;
+			
+			if (!b.length) { return; }
+			
+			if (!typeof(method) == 'string') {
+				method = 'init';
+				s = 0;
+			} else {
+				s = 1;
+			}
+			
+			args = _aps.call(arguments).slice(s);
+			fn = b[0][method];
+				
+			if ($.isFunction(fn)) {
+				fn.apply(this, args);
+			}
+		}
+
 		return F;
 	};
 })(jQuery);
