@@ -10,18 +10,21 @@
 	
 </head>
 <body>
-	<script src="../jquery/jquery-1.4a1.js"></script>
-	<script>
-	jQuery.namespaces = {
-		"_root" : './js/'
-	};
-	</script>
-	
-	<script src="../jquery.loader.js"></script>
+	<h1>Module example</h1>
+	<ul id="modules">
+		<li class="module" data-type="twitter" data-user="rmurphey">
+			<h2>Twitter</h2>
+		</li>
+		<li class="module" data-type="rss" data-url="http://blog.rebeccamurphey.com/feed/">
+			<h2>RSS</h2>
+		</li>
+	</ul>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
 	<script src="../jquery.module.js"></script>
+	<script src="js/modules.js"></script>
 	<script>
-	$.require('myNamespace.Thinger').done(function() {
-		var b = new myNamespace.Bar();
+	$(document).ready(function() {
+	//	$('#modules li.module').each(function() { new Widget($(this)); });
 	});
 	</script>
 </body>

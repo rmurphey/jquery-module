@@ -1,9 +1,4 @@
 (function($){
-	/* 
-	 * the idea of this is to be a super-lightweight module factory;
-	 * it could optionally be replaced by jQuery.widget, but currently
-	 * that is only available in jQuery UI
-	 */
 	$.module = function(
 		moduleName	/* String */, 
 		inherits 	/* Array of Object Literals or Modules to Mix In */, 
@@ -24,15 +19,14 @@
 	var Module = function(p, inherits) {
 		var args = [ p ],
 			F = function(c) {
-				this.init && typeof(this.init) == 'function' && this.init(c);
-			
 				$.each(args, function(i, arg) {
-					arg.init && arg.init(c);
+					console.log(arg);
+					arg.init && typeof(arg.init) == 'function' && arg.init(c);
 				});
 			
 				return this;
 			};
-
+			
 		inherits && $.isArray(inherits) &&
 		$.each(inherits, function(i, obj) {
 			if (typeof(obj) == 'function') {
@@ -43,7 +37,6 @@
 		});
 		
 		F.prototype = $.extend.apply(F, args);
-
 		return F;
 	};
 })(jQuery);
