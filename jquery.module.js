@@ -46,7 +46,7 @@
 				return inheritedModule;
 			});
 
-			F.prototype.inherited = function(method) {
+			F.prototype.super = function(method) {
 				var inheritedModule = inherited[inherited.length-1];
 
 				var fn, s, 

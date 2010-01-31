@@ -42,7 +42,7 @@ $.module('Widget.Twitter', Widget._fetcher, {
 	init : function(node) {
 		this.baseUrl = this.baseUrl.replace('${username}', node.attr('data-user'));
 		this.handler = this.handleResponse;
-		this.inherited(node);
+		this.super(node);
 	},
 	
 	handleResponse : function(resp) {
@@ -56,6 +56,6 @@ $.module('Widget.Rss', [ Widget._fetcher, Widget._defaultHandler ], {
 	init : function(node) {
 		this.baseUrl = this.baseUrl + escape("'" + node.attr('data-url') + "'");
 		this.handler = this.handleResponse;
-		this.inherited(node);
+		this.super(node);
 	}
 });
