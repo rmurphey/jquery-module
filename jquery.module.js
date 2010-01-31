@@ -1,9 +1,17 @@
 (function($){
+	var _isFn = $.isFunction,
+		_ext = $.extend;
+		
 	$.module = function(
 		moduleName	/* String */, 
-		inherited 		/* Module(s) to Inherit (String or Array) */, 
+		inherited 	/* Module(s) to Inherit (String or Array) */, 
 		proto 		/* Module Prototype */
 	) {
+		if (arguments.length === 2) {
+			proto = inherited;
+			inherited = []
+		}
+		
 		var moduleNamePieces = moduleName.split('.'),
 			className = moduleNamePieces.pop(),
 			inheritedObject = window;
@@ -18,38 +26,38 @@
 	};
 
 	var Module = function(p, inherited, moduleName) {
-		/* 	
-			Thanks to $.widget from jQuery UI for helping to clarify how to do this
-		*/
-		var inherited = $.isArray(inherited) ? inherited : [ inherited ],
+		/* Thanks to $.widget from jQuery UI for helping to clarify how to do this */
+		var inherited,
 			F = function() {
-				$.isFunction(this.init) && this.init.apply(this, arguments);
+				_isFn(this.init) && this.init.apply(this, arguments);
 				return this;
 			};
 			
-		inherited = $.map(inherited.reverse(), function(inherited, i) {
-			if (inherited === undefined) {
-				throw('Missing dependency for ' + moduleName);
-				return null;
-			}
-			var inherited = $.isFunction(inherited) ? inherited.prototype : inherited;
-			F.prototype = $.extend({}, F.prototype, inherited);
-			return inherited;
-		});
-			
-		F.prototype = $.extend({}, F.prototype, p);
-		
-		F.prototype.inherited = function(method) {
-			if (!inherited.length) { return; }
-			var inheritedClass = inherited[inherited.length-1];
+		if (inherited) {
+			inherited = $.isArray(inherited) ? inherited : [ inherited ];
 
-			var fn, s, 
-				methodPassed = (typeof(method) === 'string' && inheritedClass.prototype[method]);
-			
-			fn = inheritedClass[methodPassed ? method : 'init'];
-			$.isFunction(fn) && fn.apply(this, Array.prototype.slice.call(arguments).slice(methodPassed ? 0 : 1));
+			inherited = $.map(inherited.reverse(), function(inheritedModule) {
+				if (inheritedModule === undefined) {
+					throw('Missing dependency for ' + moduleName);
+					return null;
+				}
+				inheritedModule = _isFn(inheritedModule) ? inheritedModule.prototype : inheritedModule;
+				F.prototype = _extend({}, F.prototype, inherited);
+				return inheritedModule;
+			});
+
+			F.prototype.inherited = function(method) {
+				var inheritedModule = inherited[inherited.length-1];
+
+				var fn, s, 
+					methodPassed = (typeof(method) === 'string' && inheritedModule.prototype[method]);
+
+				fn = inheritedModule[methodPassed ? method : 'init'];
+				_isFn(fn) && fn.apply(this, Array.prototype.slice.call(arguments).slice(methodPassed ? 0 : 1));
+			}
 		}
 
+		F.prototype = _extend({}, F.prototype, p);
 		return F;
 	};
 })(jQuery);
