@@ -45,10 +45,11 @@
 		
 		F[_p].inherited = function(method) {
 			if (!b.length) { return; }
+			var inheritedClass = b[b.length-1];
 
-			var fn, s, m = typeof(method) === 'string';
+			var fn, s, m = (typeof(method) === 'string' && inheritedClass.prototype[method]);
 			
-			fn = b[b.length-1][m ? method : 'init'];
+			fn = inheritedClass[m ? method : 'init'];
 			_f(fn) && fn.apply(this, Array[_p].slice.call(arguments).slice(m ? 0 : 1));
 		}
 
