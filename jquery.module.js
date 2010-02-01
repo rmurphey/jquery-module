@@ -27,15 +27,14 @@
 
 	var Module = function(p, inherited, moduleName) {
 		/* Thanks to $.widget from jQuery UI for helping to clarify how to do this */
-		var inherited,
+		var 
+			inherited = $.isArray(inherited) ? inherited : [ inherited ],
 			F = function() {
 				_isFn(this.init) && this.init.apply(this, arguments);
 				return this;
 			};
 			
-		if (inherited) {
-			inherited = $.isArray(inherited) ? inherited : [ inherited ];
-
+		if (inherited.length) {
 			inherited = $.map(inherited.reverse(), function(inheritedModule) {
 				if (inheritedModule === undefined) {
 					throw('Missing dependency for ' + moduleName);
