@@ -1,5 +1,6 @@
 (function($){
-	var _isFn = $.isFunction,
+	var 
+		_isFn = $.isFunction,
 		_ext = $.extend;
 		
 	$.module = function(
@@ -12,7 +13,8 @@
 			inherited = []
 		}
 		
-		var moduleNamePieces = moduleName.split('.'),
+		var 
+			moduleNamePieces = moduleName.split('.'),
 			className = moduleNamePieces.pop(),
 			inheritedObject = window;
 			
@@ -46,9 +48,9 @@
 			});
 
 			F.prototype.super = function(method) {
-				var inheritedModule = inherited[inherited.length-1];
-
-				var fn, s, 
+				var 
+					fn, s, 
+					inheritedModule = inherited[inherited.length-1],
 					methodPassed = (typeof(method) === 'string' && inheritedModule.prototype[method]);
 
 				fn = inheritedModule[methodPassed ? method : 'init'];
